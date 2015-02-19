@@ -11,7 +11,7 @@ folder = finput.readline().rstrip("\n")
 l1=['100']#,'95','90','85']
 l2=['ppi']#,'reg','met','int']
 l3=['butland']#,'babu']
-l4=['deg']#,'bet','jc','complete']
+l4=['complete','deg']#,'bet','jc']
 l5 = ['cold']#, 'mix']
 l6 = ['csv','result','arff']
 
@@ -29,8 +29,8 @@ def readlist(c):
 	return dic_pairs
 
 
-dic_pairs_babu = readlist(l3[0])
-dic_pairs_butland = readlist(l3[1])
+#dic_pairs_babu = readlist(l3[1])
+dic_pairs_butland = readlist(l3[0])
 
 #################################################
 
