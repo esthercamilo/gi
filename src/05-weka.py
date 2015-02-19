@@ -34,7 +34,7 @@ def convert():
 						path = (folder + '%s/%s/%s/%s/%s/' % (a, b, c, d, e))
 						lista_files = os.listdir(path + 'csv/')
 						for fpath in lista_files:
-							subprocess.Popen(weka(path,fpath))
+							subprocess.Popen(weka(path, fpath))
 
 convert()
 
