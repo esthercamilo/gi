@@ -1,2 +1,2 @@
-D:/home/esther/projects/GI/
-D:/Weka/Weka-3-6/weka.jar
+/home/esther/projects/gi/
+/usr/share/java/weka.jar
