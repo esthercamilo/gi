@@ -6,11 +6,12 @@ finput = open("config.txt")
 folder = finput.readline().rstrip("\n")
 
 def getdic(f):
+    f.readline()
     dic = {}
     for line in f:
         d = line.split(',')
         try:
-            dic[(d[0],d[1])]= d[2:]
+            dic[(d[0], d[1])] = d[2:]
         except:
             pass
     return dic
@@ -23,7 +24,7 @@ f2=open(folder+'100/reg/babu/complete/training.csv')
 dicbabureg = getdic(f2)
 f3=open(folder+'100/met/babu/complete/training.csv')
 dicbabumet = getdic(f3)
-f4=folder+'100/int/babu/complete/training.csv'
+f4=open(folder+'100/int/babu/complete/training.csv')
 dicbabuint = getdic(f4)
 
 #butland
@@ -39,20 +40,43 @@ dicbutint= getdic(g4)
 
 l2 = ['ppi', 'reg', 'met', 'int']
 label = 'gene1,gene2,'+','.join([x+'_deg_min,'+x+'_deg_max,'+x+'_bet_min,'+x+'_bet_max,'+x+'_jc' for x in l2])+',score\n'
-outbut=open(folder+'butland.csv', 'w')
-outbut.write(label)
-for k in dicbutint.keys():
-    try:
-        novalinha = dicbutint[k][0:-1]+dicbutppi[k][0:-1]+dicbutreg[k][0:-1]+dicbutmet[k]
-        outbut.write(k[0]+','+k[1]+','+','.join([x for x in novalinha]))
-    except:
-        pass
+
+#se um valor nao existe na rede eh considerado zero
+
+def save(dicint,dicppi,dicreg,dicmet,name):
+    outfile=open(folder+name,'w')
+    outfile.write(label)
+
+    for k in dicint.keys():
+
+        d_ppi = ['0','0','0','0','0','0\n']
+        d_reg = ['0','0','0','0','0','0\n']
+        d_met = ['0','0','0','0','0','0\n']
+
+        try:
+            d_ppi = dicppi[k]
+        except:
+            pass
+
+        try:
+            d_reg = dicreg[k]
+        except:
+            pass
+
+        try:
+            d_met = dicmet[k]
+        except:
+            pass
+
+        novalinha = dicint[k][0:-1]+d_ppi[0:-1]+d_reg[0:-1]+d_met[0:-1]+[dicint[k][-1]]
+        outfile.write(k[0]+','+k[1]+','+','.join([x for x in novalinha]))
 
 
-outbabu=open(folder+'babu.csv','w')
-for k in dicbabuint.keys():
-    try:
-        novalinha = dicbabuint[k][0:-1]+dicbabuppi[k][0:-1]+dicbabureg[k][0:-1]+dicbabumet[k]
-        outbabu.write(k[0]+','+k[1]+','+','.join([x for x in novalinha]))
-    except:
-        pass
+
+save(dicbabuint,dicbabuppi,dicbabureg,dicbabumet,'babu.csv')
+save(dicbutint,dicbutppi,dicbutreg,dicbutmet,'butland.csv')
+
+
+
+
+
