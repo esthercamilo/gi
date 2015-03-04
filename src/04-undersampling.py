@@ -53,7 +53,7 @@ for a in l1:
 
 
 
-                # ####  generate cold training ######
+                ##### generate cold training ######
                 rm.shuffle(listacomplete)
 
                 dic_unique = {}
