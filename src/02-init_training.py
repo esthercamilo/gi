@@ -29,8 +29,8 @@ def readlist(c):
     return dic_pairs
 
 
-dic_pairs_babu = readlist(l3[0])
-dic_pairs_butland = readlist(l3[1])
+dic_pairs_babu = readlist(l3[1])
+dic_pairs_butland = readlist(l3[0])
 
 #################################################
 

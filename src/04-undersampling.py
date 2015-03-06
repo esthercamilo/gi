@@ -3,16 +3,32 @@
 # e-mail: esthercamilo@gmail.com #
 # ################################
 import random as rm
+import sys
 
 finput = open("config.txt")
 folder = finput.readline().rstrip("\n")
 
 l1 = ['100', '95', '90', '85']
-l2 = ['ppi', 'reg', 'met', 'int']
-l3 = ['butland', 'babu']
+l2 = ['int', 'ppi', 'reg', 'met']
+l3 = ['butland','babu']
 l4 = ['complete', 'deg', 'bet', 'jc']
-l5 = ['cold', 'mix']
-l6 = ['csv', 'result', 'arff']
+#l5 = ['cold', 'mix']
+#l6 = ['csv', 'result', 'arff']
+
+#given a list of instances, it returns the tuple ([AGG],[ALL])
+def getClasses(lista):
+    all=[]
+    agg=[]
+    for elem in lista:
+        d = elem.rstrip('\n').split(',')
+        if float(d[-1])<0:
+            novalinha = ','.join(d[0:-1])+',AGG\n'
+            agg.append(novalinha)
+        else:
+            novalinha = ','.join(d[0:-1])+',ALL\n'
+            all.append(novalinha)
+    tupla = (agg,all)
+    return tupla
 
 for a in l1:
     for b in l2:
@@ -26,75 +42,47 @@ for a in l1:
                 for line in fcomplete:
                     listacomplete.append(line)
 
-                    # ####  generate mix training ######
-                l_agg1 = []
-                l_all1 = []
-                for v in listacomplete:
-                    d = v.split(',')
-                    score = d[-1].rstrip()
-                    if float(score) < 0:
-                        newline1 = ','.join(d[0:-1] + ['AGG\n'])
-                        l_agg1.append(newline1)
-                        # l_agg1.append(v.replace(score, "AGG"))
-                    else:
-                        newline2 = ','.join(d[0:-1] + ['ALL\n'])
-                        l_all1.append(newline2)
-                        # l_all1.append(v.replace(score, "ALL"))
-
-                s11 = len(l_agg1)
-                s22 = len(l_all1)
-                size1 = min(s11, s22)
-                for i in range(100):
-                    output_mix = open(folder + path + "mix/csv/" + str(i + 1) + ".csv", "w")
-                    output_mix.write(head_complete)
-                    for j in range(size1 / 2):
-                        output_mix.write(l_agg1[j])
-                        output_mix.write(l_all1[j])
-
-
-
-                ##### generate cold training ######
-                rm.shuffle(listacomplete)
-
-                dic_unique = {}
-                for elem in listacomplete:
-                    dic_unique[elem[0:12]] = elem
-
-                l_agg = []
-                l_all = []
-
-                for v in dic_unique.values():
-                    d = v.split(",")
-                    score = d[-1].rstrip()
-                    if float(score) < 0:
-                        newline1 = ','.join(d[0:-1] + ['AGG\n'])
-                        l_agg.append(newline1)
-                        #l_agg.append(v.replace(score, "AGG"))
-                    else:
-                        newline2 = ','.join(d[0:-1] + ['ALL\n'])
-                        l_all.append(newline2)
-                        #l_all.append(v.replace(score, "ALL"))
-
-                s1 = len(l_agg)
-                s2 = len(l_all)
-
-                size = min(s1, s2)
+                tupleAllAgg = getClasses(listacomplete)
 
                 for i in range(100):
                     output_train = open(folder + path + "cold/csv/" + str(i + 1) + "_train.csv", "w")
                     output_test = open(folder + path + "cold/csv/" + str(i + 1) + "_test.csv", "w")
                     output_train.write(head_complete)
                     output_test.write(head_complete)
-                    for j in range(size / 2):
-                        output_train.write(l_agg[j])
-                        output_train.write(l_all[j])
-                    for j in range(size / 2, size):
-                        output_test.write(l_agg[j])
-                        output_test.write(l_all[j])
+
+                    #embaralha
+                    rn_all = tupleAllAgg[1]
+                    rm.shuffle(tupleAllAgg[0])
+                    rn_agg = tupleAllAgg[0][0:len(rn_all)]
+
+                    len_rn = len(rn_all)
+                    half = len_rn/2 #mesmo tamanho do agg
+
+                    #ordena para dividir em train e test
+                    rn_all_o = sorted(rn_all)
+                    rn_agg_o = sorted(rn_agg)
+
+                    train_all = rn_all_o[0:half]
+                    test_all = rn_all_o[half:len_rn]
+
+                    train_agg = rn_agg_o[0:half]
+                    test_agg = rn_agg_o[half:len_rn]
+
+                    #save train
+                    for l in train_all:
+                        output_train.write(l)
+                    for l in train_agg:
+                        output_train.write(l)
+
+                    #save test
+                    for l in test_all:
+                        output_test.write(l)
+                    for l in test_agg:
+                        output_test.write(l)
+
                     output_train.close()
                     output_test.close()
-
-    print a, " done"
+                    print a,b,c,d, " done"
 
 
 
