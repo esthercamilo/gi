@@ -51,16 +51,19 @@ for a in l1:
                     output_test.write(head_complete)
 
                     #embaralha
+                    rn_agg = tupleAllAgg[0]
                     rn_all = tupleAllAgg[1]
-                    rm.shuffle(tupleAllAgg[0])
-                    rn_agg = tupleAllAgg[0][0:len(rn_all)]
+                    rm.shuffle(rn_agg)
+                    #pega so o comeco
+                    sg = len(rn_all) 
+                    rn_agg = rn_agg[0:sg]
 
                     len_rn = len(rn_all)
                     half = len_rn/2 #mesmo tamanho do agg
 
                     #ordena para dividir em train e test
                     rn_all_o = sorted(rn_all)
-                    rn_agg_o = sorted(rn_agg)
+                    rn_agg_o = rn_agg #esse nao deve ser ordenado senao grupos saem iguais
 
                     train_all = rn_all_o[0:half]
                     test_all = rn_all_o[half:len_rn]

@@ -3,55 +3,77 @@
 # e-mail: esthercamilo@gmail.com #
 # ################################
 import random as rm
+import os
 
 finput = open("config.txt")
 folder = finput.readline().rstrip("\n")
 
 
+
 path = folder + "TOTAL/undersampling/"
 
 
-def undersampling(nameinput, folderoutput):
-    fileoriginal = open(path+nameinput)
+def getClasses(lista):
+    all=[]
+    agg=[]
+    for elem in lista:
+        d = elem.rstrip('\n').split(',')
+        if float(d[-1])<0:
+            novalinha = ','.join(d[0:-1])+',AGG\n'
+            agg.append(novalinha)
+        else:
+            novalinha = ','.join(d[0:-1])+',ALL\n'
+            all.append(novalinha)
+    tupla = (agg,all)
+    return tupla
+
+def undersampling(nameinput, folderoutput,b):
+    fileoriginal = open(path + nameinput)
     header = fileoriginal.readline()
-    listaoriginal = fileoriginal.readlines()
-    rm.shuffle(listaoriginal)
+    listacomplete = fileoriginal.readlines()
+    tupleAllAgg = getClasses(listacomplete)
 
-    dic_unique = {}
-    for elem in listaoriginal:
-        dic_unique[elem[0:12]] = elem
-        l_agg = []
-        l_all = []
-        for v in dic_unique.values():
-            d = v.split(",")
-            score = d[-1].rstrip()
-            if float(score) < 0:
-                newline1 = ','.join(d[0:-1] + ['AGG\n'])
-                l_agg.append(newline1)
-                #l_agg.append(v.replace(score, "AGG"))
-            else:
-                newline2 = ','.join(d[0:-1] + ['ALL\n'])
-                l_all.append(newline2)
-                #l_all.append(v.replace(score, "ALL"))
+    rn_agg = tupleAllAgg[0]
+    rn_all = tupleAllAgg[1]
+    len_rn = len(rn_all)
+    half = len_rn/2
+    rn_all_o = sorted(rn_all)
 
-        s1 = len(l_agg)
-        s2 = len(l_all)
 
-        size = min(s1, s2)
+    for i in range(100):
+        output_train = open(path + b + "/csv/" + str(i + 1) + "_train.csv", "w")
+        output_test = open(path + b + "/csv/" + str(i + 1) + "_test.csv", "w")
+        output_train.write(header)
+        output_test.write(header)
 
-        for i in range(100):
-            output_train = open(path+folderoutput+ str(i + 1) + "_train.csv", "w")
-            output_test = open(path+folderoutput+ str(i + 1) + "_test.csv", "w")
-            output_train.write(header)
-            output_test.write(header)
-            for j in range(size / 2):
-                output_train.write(l_agg[j])
-                output_train.write(l_all[j])
-            for j in range(size / 2, size):
-                output_test.write(l_agg[j])
-                output_test.write(l_all[j])
-            output_train.close()
-            output_test.close()
+        #embaralha
+        rm.shuffle(rn_agg)
+        #pega so o comeco
+        sg = len(rn_all)
+        rn_agg = rn_agg[0:sg]
 
-#undersampling('babu/babu.csv', 'babu/csv/')
-undersampling('butland/butland.csv', 'butland/csv/')
+        train_all = rn_all_o[0:half]
+        test_all = rn_all_o[half:len_rn]
+
+        train_agg = rn_agg[0:half]
+        test_agg = rn_agg[half:len_rn]
+
+        #save train
+        for l in train_all:
+            output_train.write(l)
+        for l in train_agg:
+            output_train.write(l)
+
+        #save test
+        for l in test_all:
+            output_test.write(l)
+        for l in test_agg:
+            output_test.write(l)
+
+        output_train.close()
+        output_test.close()
+
+
+
+undersampling('babu/babu.csv', 'babu/csv/', 'babu')
+undersampling('butland/butland.csv', 'butland/csv/', 'butland')

@@ -5,6 +5,22 @@ import os
 finput = open("config.txt")
 folder = finput.readline().rstrip("\n")
 
+def makedir(namedir):
+    if not os.path.exists(namedir):
+        os.makedirs(namedir)
+
+
+makedir(folder + "TOTAL/undersampling/babu/csv/")
+makedir(folder + "TOTAL/undersampling/butland/csv/")
+makedir(folder + "TOTAL/undersampling/babu/arff/")
+makedir(folder + "TOTAL/undersampling/butland/arff/")
+makedir(folder + "TOTAL/undersampling/babu/result_meta/")
+makedir(folder + "TOTAL/undersampling/butland/result_meta/")
+makedir(folder + "TOTAL/undersampling/babu/result_j48/")
+makedir(folder + "TOTAL/undersampling/butland/result_j48/")
+
+
+
 def getdic(f):
     f.readline()
     dic = {}
@@ -38,7 +54,7 @@ dicbutmet = getdic(g3)
 g4=open(folder+'100/int/butland/complete/training.csv')
 dicbutint= getdic(g4)
 
-l2 = ['ppi', 'reg', 'met', 'int']
+l2 = ['int', 'ppi', 'reg', 'met']
 label = 'gene1,gene2,'+','.join([x+'_deg_min,'+x+'_deg_max,'+x+'_bet_min,'+x+'_bet_max,'+x+'_jc' for x in l2])+',score\n'
 
 #se um valor nao existe na rede eh considerado zero
@@ -73,8 +89,8 @@ def save(dicint,dicppi,dicreg,dicmet,name):
 
 
 
-save(dicbabuint,dicbabuppi,dicbabureg,dicbabumet,'babu.csv')
-save(dicbutint,dicbutppi,dicbutreg,dicbutmet,'butland.csv')
+save(dicbabuint,dicbabuppi,dicbabureg,dicbabumet,'TOTAL/undersampling/babu/babu.csv')
+save(dicbutint,dicbutppi,dicbutreg,dicbutmet,'TOTAL/undersampling/butland/butland.csv')
 
 
 

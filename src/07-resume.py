@@ -12,8 +12,8 @@ l2 = ['ppi', 'reg', 'met', 'int']
 
 foutputbutland = open(folder+'sumario_butland.csv','w')
 foutputbabu = open(folder+'sumario_babu.csv','w')
-foutputbutland.write('Percent,int,ppi,reg,met,roc\n')
-foutputbabu.write('Percent,int,ppi,reg,met,roc\n')
+foutputbutland.write('Percent,int,ppi,reg,met\n')
+foutputbabu.write('Percent,int,ppi,reg,met\n')
 
 def getroc(f):
     roc='0'
@@ -24,7 +24,6 @@ def getroc(f):
     for i in range(17):
         rocline = f.readline()
     roc = rocline[67:77].strip()
-
     return roc
 
 dicbabu={}
@@ -43,16 +42,15 @@ for a in l1:
         dicbabu[(a,b)]=listababu
         dicbutland[(a,b)]=listabutland
 
-g = ['100', '95', '90', '85']
 
 def save(dic,output):
-    for p in g:
+    for p in l1:
         int = dic[(p,"int")]
         ppi = dic[(p,"ppi")]
         reg = dic[(p,"reg")]
         met = dic[(p,"met")]
         for i in range(1,100):
-            output.write("%s,%s,%s,%s,%s\n" % (p,int[i],ppi[i],reg[i],met[i]))
+            output.write("%s,%s,%s,%s,%s\n" % (p+"A",int[i],ppi[i],reg[i],met[i]))
 
 save(dicbabu,foutputbabu)
 save(dicbutland,foutputbutland)
