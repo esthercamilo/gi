@@ -21,6 +21,8 @@ l4 = ['deg', 'bet', 'jc', 'complete']
 l5 = ['cold', 'mix']
 l6 = ['csv', 'result', 'arff']
 
+
+
 for a in l1:
     for b in l2:
         for c in l3:

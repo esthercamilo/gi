@@ -12,6 +12,8 @@ def makedir(namedir):
 
 makedir(folder + "TOTAL/undersampling/babu/csv/")
 makedir(folder + "TOTAL/undersampling/butland/csv/")
+makedir(folder + "TOTAL/undersampling/babu/csv_mix/")
+makedir(folder + "TOTAL/undersampling/butland/csv_mix/")
 makedir(folder + "TOTAL/undersampling/babu/arff/")
 makedir(folder + "TOTAL/undersampling/butland/arff/")
 makedir(folder + "TOTAL/undersampling/babu/result_meta/")

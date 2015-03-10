@@ -17,11 +17,13 @@ def getroc(f):
     for i in range(17):
         rocline = f.readline()
     roc = rocline[67:77].strip()
+    if float(roc)<0.5:
+        print roc,f
     return roc
 
 dicbabu={}
 dicbutland={}
-for b in ["result_j48","result_meta"]:
+for b in ["result_meta"]:
     for i in range(1,101):
         finputbabu = open(folder+"babu/"+b+"/"+str(i)+'_result.txt')
         finputbutland = open(folder+"butland/"+b+"/"+str(i)+'_result.txt')
@@ -31,7 +33,7 @@ for b in ["result_j48","result_meta"]:
         dicbutland[(i,b)]=rocbutland
 
 for i in range(1,101):
-    foutput.write("%s,%s,%s\n" % ("J48",dicbutland[(i,"result_j48")],dicbabu[(i,"result_j48")]))
+    #foutput.write("%s,%s,%s\n" % ("J48",dicbutland[(i,"result_j48")],dicbabu[(i,"result_j48")]))
     foutput.write("%s,%s,%s\n" % ("Meta_Vote",dicbutland[(i,"result_meta")],dicbabu[(i,"result_meta")]))
 
 

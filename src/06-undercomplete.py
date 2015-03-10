@@ -73,7 +73,22 @@ def undersampling(nameinput, folderoutput,b):
         output_train.close()
         output_test.close()
 
-
+    #fill mix
+    for i in range(100):
+        inputmix1 = open(path + b + "/csv/" + str(i + 1) + "_train.csv")
+        inputmix2 = open(path + b + "/csv/" + str(i + 1) + "_test.csv")
+        outputmix = open(path + b + "/csv_mix/" + str(i + 1) + ".csv", "w")
+        outputmix.write(header)
+        inputmix1.readline()
+        inputmix2.readline()
+        for line in inputmix1:
+            outputmix.write(line)
+        for line in inputmix2:
+            outputmix.write(line)
+        outputmix.close()
+        inputmix1.close()
+        inputmix2.close()
+        print i
 
 undersampling('babu/babu.csv', 'babu/csv/', 'babu')
 undersampling('butland/butland.csv', 'butland/csv/', 'butland')

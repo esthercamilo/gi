@@ -9,7 +9,6 @@ folder = finput.readline().rstrip("\n")
 l1 = ['100', '95', '90', '85']
 l2 = ['ppi', 'reg', 'met', 'int']
 
-
 foutputbutland = open(folder+'sumario_butland.csv','w')
 foutputbabu = open(folder+'sumario_babu.csv','w')
 foutputbutland.write('Percent,int,ppi,reg,met\n')
@@ -24,6 +23,8 @@ def getroc(f):
     for i in range(17):
         rocline = f.readline()
     roc = rocline[67:77].strip()
+    if float(roc) < 0.3:
+        print roc,f.name
     return roc
 
 dicbabu={}

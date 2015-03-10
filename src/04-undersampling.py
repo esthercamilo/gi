@@ -88,6 +88,22 @@ for a in l1:
                     print a,b,c,d, " done"
 
 
+                #fill mix
+                for i in range(100):
+                    inputmix1 = open(folder + path + "cold/csv/" + str(i + 1) + "_train.csv")
+                    inputmix2 = open(folder + path + "cold/csv/" + str(i + 1) + "_test.csv")
+                    outputmix = open(folder + path + "mix/csv/" + str(i + 1) + ".csv", "w")
+                    outputmix.write(head_complete)
+                    inputmix1.readline()
+                    inputmix2.readline()
+                    for line in inputmix1:
+                        outputmix.write(line)
+                    for line in inputmix2:
+                        outputmix.write(line)
+                    outputmix.close()
+                    inputmix1.close()
+                    inputmix2.close()
+
 
 
 
