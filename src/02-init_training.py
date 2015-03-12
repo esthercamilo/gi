@@ -50,7 +50,7 @@ def jaccard(G, pairs):
             n2 = G.neighbors(p[0])
             inter = len(set(n1) & set(n2))
             union = len(set(n1) | set(n2))
-            jc = 0
+            jc = 0.0
             try:
                 jc = inter / union
             except ZeroDivisionError:

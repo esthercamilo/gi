@@ -7,18 +7,15 @@ finput = open("config.txt")
 folder = finput.readline().rstrip("\n")
 
 l1 = ['100', '95', '90', '85']
-l2 = ['ppi', 'reg', 'met', 'int']
-l3 = ['butland', 'babu']
-l4 = ['deg', 'bet', 'complete']
 
 foutput = open(folder+'sumario.csv','w')
-foutput.write('percent,network,source,attribute,meanROC\n')
+foutput.write('Percent,J48,Meta-vote\n')
 
 def getroc(f):
     roc='0'
     line = f.readline()
 
-    while "Error on test data" not in line:
+    while "Stratified cross-validation" not in line:
         line = f.readline()
     for i in range(17):
         rocline = f.readline()
@@ -26,24 +23,20 @@ def getroc(f):
 
     return roc
 
-
+dicj48={}
+dicmeta={}
 for a in l1:
-    for b in l2:
-        for c in l3:
-            for d in l4:
-                roclist = []
-                for i in range(1,101):
-                    filename = folder+a+'/'+b+'/'+c+'/'+d+'/cold/result/'+str(i)+'_result.txt'
-                    if os.stat(filename).st_size > 0:
-                        finput = open(filename)
-                        roc = getroc(finput)
-                    else:
-                        roc=0
-                        print a,b,c,d,' probleminha'
-                    roclist.append(float(roc))
-                array = np.array(roclist)
-                mean = np.mean(array)
-                foutput.write(a+','+b+','+c+','+d+','+str(mean)+'\n')
+    for i in range(1,101):
+        finputmeta = open(folder+a+'/result_meta/'+str(i)+'.txt')
+        finputj48 = open(folder+a+'/result_j48/'+str(i)+'.txt')
+        rocmeta = getroc(finputmeta)
+        rocj48 = getroc(finputj48)
+        dicj48[(a,i)]=rocj48
+        dicmeta[(a,i)]=rocmeta
+
+for k in dicj48:
+    foutput.write('%sA,%s,%s\n' % (k[0], dicj48[k], dicmeta[k]))
+
 
 
 

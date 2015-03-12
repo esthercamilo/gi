@@ -17,7 +17,7 @@ def makedir(namedir):
 
 #Levels
 
-perc = ['100', '95', '90', '85']
+perc = ['100']
 
 network = ['deg', 'reg', 'met', 'int']
 
@@ -29,7 +29,7 @@ att_met = ['metin', 'metout']
 
 #read butland file
 dicpairs = {}
-filebut = open(folder+'files/butlandscore.tab')
+filebut = open(folder+'files/babuscore.tab')
 filebut.readline()
 for line in filebut:
     d = line.split()
@@ -56,7 +56,7 @@ def CN(G, pairs):  #common neighbors
             inter = len(set(n1) & set(n2))
             dic[p] = inter
         else:
-            dic[p]=0
+            dic[p]=0.0
     return dic
 
 def FSW(G, pairs):
@@ -86,31 +86,28 @@ def FSW(G, pairs):
             try:
                 fsw = (2 * i / (ymx + 2 * i + l1)) * (2 * i / (xmy + 2 * i + l2))
             except:
-                fsw = 0
+                fsw = 0.0
             dic[p] = fsw
         else:
-            dic[p]=0
+            dic[p]=0.0
     return dic
 
 def JC(G, pairs):  #Jaccard
     dic = {}
     nodes = G.nodes()
     for p in pairs:
+        jc = 0.0
         if p[0] in nodes and p[1] in nodes:
             n1 = G.neighbors(p[0])
-            n2 = G.neighbors(p[0])
-            inter = len(set(n1) & set(n2))
+            n2 = G.neighbors(p[1])
+            inter = float(len(set(n1) & set(n2)))
             union = len(set(n1) | set(n2))
-            jc = 0
             try:
                 jc = inter / union
             except ZeroDivisionError:
                 pass
-            dic[p] = jc
-        else:
-            dic[p]=0
+        dic[p] = jc
     return dic
-
 
 #return a list of pairs
 def readintfile(filename):
@@ -129,7 +126,7 @@ listreg = readintfile('files/reg.tab')
 listmet = readintfile('files/met.tab')
 
 def getatt(perc):
-    print "Network ",perc
+    print "Network ", perc
     per = float(perc) / 100
 
     Gint = nx.Graph()
@@ -169,20 +166,20 @@ def getatt(perc):
     regout = Greg.out_degree()
     metin = Gmet.in_degree()
     metout = Gmet.out_degree()
-    cn_int = CN(listint,dicpairs.keys())
-    cn_ppi = CN(listppi,dicpairs.keys())
-    cn_reg = CN(listreg,dicpairs.keys())
-    cn_met = CN(listmet,dicpairs.keys())
+    cn_int = CN(Gint,dicpairs.keys())
+    cn_ppi = CN(Gppi,dicpairs.keys())
+    cn_reg = CN(Greg,dicpairs.keys())
+    cn_met = CN(Gmet,dicpairs.keys())
     print "Common neighbors computed."
-    FSW_int = FSW(listint,dicpairs.keys())
-    FSW_ppi = FSW(listppi,dicpairs.keys())
-    FSW_reg = FSW(listreg,dicpairs.keys())
-    FSW_met = FSW(listmet,dicpairs.keys())
+    FSW_int = FSW(Gint,dicpairs.keys())
+    FSW_ppi = FSW(Gppi,dicpairs.keys())
+    FSW_reg = FSW(Greg,dicpairs.keys())
+    FSW_met = FSW(Gmet,dicpairs.keys())
     print "FSW computed."
-    JC_int = JC(listint,dicpairs.keys())
-    JC_ppi = JC(listppi,dicpairs.keys())
-    JC_reg = JC(listreg,dicpairs.keys())
-    JC_met = JC(listmet,dicpairs.keys())
+    JC_int = JC(Gint,dicpairs.keys())
+    JC_ppi = JC(Gppi,dicpairs.keys())
+    JC_reg = JC(Greg,dicpairs.keys())
+    JC_met = JC(Gmet,dicpairs.keys())
     print "Jaccard computed."
     sp_int = nx.shortest_path_length(Gint)
     sp_ppi = nx.shortest_path_length(Gppi)
@@ -190,32 +187,48 @@ def getatt(perc):
     print "Spaths computed."
 
     def maxmin(dic,p):
-        tupla = (0.0, 0.0)
+        tupla = ('0.0', '0.0')
         try:
             gene1 = dic[p[0]]
             gene2 = dic[p[1]]
-            par = sorted[float(gene1),float(gene2)]
+            par = sorted([float(gene1),float(gene2)])
+            tupla = (str(par[1]),str(par[0])) #max and min
         except:
             pass
 
         return tupla
 
     def tenta(dic,p):
-        valor = 0.0
+        valor = "0.0"
         try:
-            valor = dic[p]
+            valor = str(dic[p])
+        except:
+            pass
+        return valor
+
+    def tentasp(dic,p):
+        valor = '0.0'
+        try:
+            valor = dic[p[0]][p[1]]
         except:
             pass
         return valor
 
     output = open (folder+perc+'/training.csv', 'w')
 
-    output.write('gene1,gene2,deg_int_max,deg_int,min,deg_ppi_max,deg_ppi_min,deg_reg_max,deg_reg_min,\
-    deg_met_max,deg_met_min,bet_int_max,bet_int_min,bet_ppi_max,bet_ppi_min,bet_reg_max,bet_reg_min,bet_met_max,\
-    bet_met_min,regin_max,regin_min,regout_max,regout_min,metin_max,metin_min,metout_max,metout,min,cn_int,\
-    cn_ppi,cn_reg,cn_met,FSW_int,FSW_ppi,FSW_reg,FSW_met,JC_int,JC_ppi,JC_reg,JC_met,sp_int,sp_ppi,sp_met\n')
+    output.write('gene1,gene2,deg_int_max,deg_int_min,deg_ppi_max,deg_ppi_min,deg_reg_max,deg_reg_min,\
+deg_met_max,deg_met_min,bet_int_max,bet_int_min,bet_ppi_max,bet_ppi_min,bet_reg_max,bet_reg_min,bet_met_max,\
+bet_met_min,regin_max,regin_min,regout_max,regout_min,metin_max,metin_min,metout_max,metout_min,cn_int,\
+cn_ppi,cn_reg,cn_met,FSW_int,FSW_ppi,FSW_reg,FSW_met,JC_int,JC_ppi,JC_reg,JC_met,sp_int,sp_ppi,sp_met,score\n')
 
     for p in dicpairs.keys():
+
+        try:
+            temp1 = deg_int[p[0]]
+            temp2 = deg_int[p[1]]
+        except:
+            continue
+
         v_deg_int = maxmin(deg_int,p)
         v_deg_ppi = maxmin(deg_ppi,p)
         v_deg_reg = maxmin(deg_reg,p)
@@ -227,28 +240,33 @@ def getatt(perc):
         v_regin = maxmin(regin,p)
         v_regout = maxmin(regout,p)
         v_metin = maxmin(metin,p)
-        v_metout = maxmin(metout)
-        v_cn_int = tenta (cn_int)
-        v_cn_ppi = tenta (cn_ppi)
-        v_cn_reg = tenta (cn_reg)
-        v_cn_met = tenta (cn_met)
-        v_FSW_int = tenta (FSW_int)
-        v_FSW_ppi = tenta (FSW_ppi)
-        v_FSW_reg = tenta (FSW_reg)
-        v_FSW_met = tenta (FSW_met)
-        v_JC_int = tenta(JC_int)
-        v_JC_ppi = tenta (JC_ppi)
-        v_JC_reg = tenta (JC_reg)
-        v_JC_met = tenta (JC_met)
-        v_sp_int = tenta (sp_int)
-        v_sp_ppi = tenta (sp_ppi)
-        v_sp_met = tenta (sp_met)
+        v_metout = maxmin(metout,p)
+        v_cn_int = tenta (cn_int,p)
+        v_cn_ppi = tenta (cn_ppi,p)
+        v_cn_reg = tenta (cn_reg,p)
+        v_cn_met = tenta (cn_met,p)
+        v_FSW_int = tenta (FSW_int,p)
+        v_FSW_ppi = tenta (FSW_ppi,p)
+        v_FSW_reg = tenta (FSW_reg,p)
+        v_FSW_met = tenta (FSW_met,p)
+        v_JC_int = tenta(JC_int,p)
+        v_JC_ppi = tenta (JC_ppi,p)
+        v_JC_reg = tenta (JC_reg,p)
+        v_JC_met = tenta (JC_met,p)
+        v_sp_int = tentasp (sp_int,p)
+        v_sp_ppi = tentasp (sp_ppi,p)
+        v_sp_met = tentasp (sp_met,p)
 
-        output.write(42*'%s'+'\n' % (p[0],p[1],v_deg_int[0],v_deg_int[1],v_deg_ppi[0],v_deg_ppi[1],v_deg_reg[0],v_deg_reg[1],
-    v_deg_met[0],v_deg_met[1],v_bet_int[0],v_bet_int[1],v_bet_ppi[0],v_bet_ppi[1],v_bet_reg[0],v_bet_reg[1],v_bet_met[0],\
-    v_bet_met[1],v_regin[0],v_regin[1],v_regout[0],v_regout[1],v_metin[0],v_metin[1],v_metout[0],v_metout[1],v_cn_int[p],\
-    v_cn_ppi[p],v_cn_reg[p],v_cn_met[p],v_FSW_int[p],v_FSW_ppi[p],v_FSW_reg[p],v_FSW_met[p],v_JC_int[p],v_JC_ppi[p],v_JC_reg,
-    v_JC_met[p],v_sp_int[p],v_sp_ppi[p],v_sp_met[p]))
+        myline = (42*'%s,' % (p[0],p[1],v_deg_int[0],v_deg_int[1], v_deg_ppi[0], v_deg_ppi[1], \
+                                        v_deg_reg[0],v_deg_reg[1], v_deg_met[0],v_deg_met[1],v_bet_int[0], \
+                                        v_bet_int[1],v_bet_ppi[0], v_bet_ppi[1],v_bet_reg[0],v_bet_reg[1], \
+                                        v_bet_met[0],v_bet_met[1], v_regin[0],  v_regin[1],  v_regout[0], \
+                                        v_regout[1], v_metin[0], v_metin[1], v_metout[0], v_metout[1],\
+                                        v_cn_int, v_cn_ppi, v_cn_reg, v_cn_met, v_FSW_int, v_FSW_ppi, \
+                                        v_FSW_reg, v_FSW_met, v_JC_int, v_JC_ppi, v_JC_reg,v_JC_met, \
+                                        v_sp_int,v_sp_ppi,v_sp_met,str(dicpairs[p])))
+        myline = myline.rstrip(',') + "\n"
+        output.write(myline)
 
 for p in perc:
     getatt(p)
